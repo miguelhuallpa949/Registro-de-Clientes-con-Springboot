@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+</head>
+<body>
+	<script type="text/javascript" th:fragment="javascript">
+		$(document).ready(function() {
+			$("#buscar_producto").autocomplete({
+				source : function(request, response) {//obtener los datos a través de ajax
+					$.ajax({
+						url : "/factura/cargar-productos/" + request.term, //term es cuando el usuario va a ingresar texto en el input
+						dataType : "json",
+						data : {
+							term : request.term
+						},
+						success : function(data) {//recibe los datos en formato json y se lo pasa al autocomplete
+							response($.map(data, function(item) {
+								return {
+									value : item.id,
+									label : item.nombre,
+									precio : item.precio,
+								};
+							})); //map realiza un proceso por cada elemento del arreglo
+						},
+					});
+				},
+				select : function(event, ui) {// metodo que realiza cualquier tarea despues del autocomplete
+					$("#buscar_producto").val(ui.item.label);
+					return false;
+				}
+			})
+		});
+	</script>
+</body>
+</html>
